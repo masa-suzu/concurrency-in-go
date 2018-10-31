@@ -2,7 +2,7 @@ package chapter1
 
 import "time"
 
-func SleepAfterCreatingGoroutine() int {
+func RaceData() int {
 	var data int
 
 	go func() { data++ }()

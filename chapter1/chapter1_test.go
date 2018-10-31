@@ -6,7 +6,7 @@ import (
 	"github.com/masa-suzu/concurrency-in-go/chapter1"
 )
 
-func TestSleepAfterCreatingGoroutine(t *testing.T) {
+func TestRaceData(t *testing.T) {
 
 	tests := []struct {
 		name string
@@ -19,11 +19,10 @@ func TestSleepAfterCreatingGoroutine(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i := 0; i < tt.in; i++ {
-				got := chapter1.SleepAfterCreatingGoroutine()
+				got := chapter1.RaceData()
 
 				if got != tt.want {
-					t.Errorf("chapter1.SleepAfterCreatingGoroutine() = %v, want %v", got, tt.want)
-					break
+					t.Fatalf("chapter1.RaceData() = %v, want %v", got, tt.want)
 				}
 			}
 		})
