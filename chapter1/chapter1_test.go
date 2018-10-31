@@ -22,8 +22,26 @@ func TestSleepAfterCreatingGoroutine(t *testing.T) {
 				got := chapter1.SleepAfterCreatingGoroutine()
 
 				if got != tt.want {
-					t.Fatalf("chapter1.SleepAfterCreatingGoroutine() = %v, want %v", got, tt.want)
+					t.Errorf("chapter1.SleepAfterCreatingGoroutine() = %v, want %v", got, tt.want)
+					break
 				}
+			}
+		})
+	}
+}
+
+func TestDeadLock(t *testing.T) {
+
+	tests := []struct {
+		name string
+		in   int
+	}{
+		{name: "trial=1", in: 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for i := 0; i < tt.in; i++ {
+				chapter1.DeadLock()
 			}
 		})
 	}
