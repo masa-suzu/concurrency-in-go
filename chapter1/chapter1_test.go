@@ -29,7 +29,7 @@ func TestRaceData(t *testing.T) {
 	}
 }
 
-func TestDeadLock(t *testing.T) {
+func DeadLock(t *testing.T) {
 
 	tests := []struct {
 		name string
@@ -37,11 +37,24 @@ func TestDeadLock(t *testing.T) {
 	}{
 		{name: "trial=1", in: 1},
 	}
+	defer func() {
+		t.Error("fatal error: all goroutines are asleep - deadlock!")
+	}()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i := 0; i < tt.in; i++ {
 				chapter1.DeadLock()
 			}
 		})
+	}
+}
+
+func TestLiveLock(t *testing.T) {
+
+	want := true
+	got := chapter1.LiveLock()
+
+	if got != want {
+		t.Errorf("chapter1.LiveLock() = %v, want %v", got, want)
 	}
 }
