@@ -58,3 +58,7 @@ func TestLiveLock(t *testing.T) {
 		t.Errorf("chapter1.LiveLock() = %v, want %v", got, want)
 	}
 }
+
+func TestShortResources(t *testing.T) {
+	chapter1.ShortResources()
+}
