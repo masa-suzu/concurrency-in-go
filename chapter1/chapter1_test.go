@@ -1,9 +1,7 @@
-package chapter1_test
+package chapter1
 
 import (
 	"testing"
-
-	"github.com/masa-suzu/concurrency-in-go/chapter1"
 )
 
 func TestRaceData(t *testing.T) {
@@ -19,7 +17,7 @@ func TestRaceData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i := 0; i < tt.in; i++ {
-				got := chapter1.RaceData()
+				got := RaceData()
 
 				if got != tt.want {
 					t.Fatalf("chapter1.RaceData() = %v, want %v", got, tt.want)
@@ -29,7 +27,7 @@ func TestRaceData(t *testing.T) {
 	}
 }
 
-func DeadLock(t *testing.T) {
+func _DeadLock(t *testing.T) {
 
 	tests := []struct {
 		name string
@@ -43,7 +41,7 @@ func DeadLock(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for i := 0; i < tt.in; i++ {
-				chapter1.DeadLock()
+				DeadLock()
 			}
 		})
 	}
@@ -52,7 +50,7 @@ func DeadLock(t *testing.T) {
 func TestLiveLock(t *testing.T) {
 
 	want := true
-	got := chapter1.LiveLock()
+	got := LiveLock()
 
 	if got != want {
 		t.Errorf("chapter1.LiveLock() = %v, want %v", got, want)
@@ -60,5 +58,5 @@ func TestLiveLock(t *testing.T) {
 }
 
 func TestShortResources(t *testing.T) {
-	chapter1.ShortResources()
+	ShortResources()
 }

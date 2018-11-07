@@ -1,19 +1,51 @@
-package chapter3_test
+package chapter3
 
 import (
+	"sync"
 	"testing"
-
-	"github.com/masa-suzu/concurrency-in-go/chapter3"
 )
 
 func TestStrangeGoroutine(t *testing.T) {
-	chapter3.StrangeGoroutine()
+	StrangeGoroutine()
 }
 
 func TestIntelligibleGoroutine(t *testing.T) {
-	chapter3.IntelligibleGoroutine()
+	IntelligibleGoroutine()
 }
 
 func TestMeasureConsumptionOfMemory(t *testing.T) {
-	chapter3.MeasureConsumptionOfMemory()
+	MeasureConsumptionOfMemory()
+}
+
+func BenchmarkSwitchContext(b *testing.B) {
+	var wg sync.WaitGroup
+	begin := make(chan struct{})
+
+	c := make(chan struct{})
+
+	var token struct{}
+	sender := func() {
+		defer wg.Done()
+
+		<-begin
+		for i := 0; i < b.N; i++ {
+			c <- token
+		}
+	}
+	receiver := func() {
+		defer wg.Done()
+
+		<-begin
+		for i := 0; i < b.N; i++ {
+			<-c
+		}
+	}
+	wg.Add(2)
+	go sender()
+	go receiver()
+
+	b.StartTimer()
+	close(begin)
+
+	wg.Wait()
 }
