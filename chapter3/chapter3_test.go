@@ -13,3 +13,7 @@ func TestStrangeGoroutine(t *testing.T) {
 func TestIntelligibleGoroutine(t *testing.T) {
 	chapter3.IntelligibleGoroutine()
 }
+
+func TestMeasureConsumptionOfMemory(t *testing.T) {
+	chapter3.MeasureConsumptionOfMemory()
+}
