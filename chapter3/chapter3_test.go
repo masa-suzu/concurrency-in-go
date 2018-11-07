@@ -9,3 +9,7 @@ import (
 func TestStrangeGoroutine(t *testing.T) {
 	chapter3.StrangeGoroutine()
 }
+
+func TestIntelligibleGoroutine(t *testing.T) {
+	chapter3.IntelligibleGoroutine()
+}
