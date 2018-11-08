@@ -7,4 +7,5 @@ func main() {
 	chapter3.Mutex()
 	chapter3.RWMutex()
 	chapter3.Cond()
+	chapter3.BroadCast()
 }
