@@ -175,3 +175,24 @@ func BroadCast() {
 	button.Clicked.Broadcast()
 	clickRegistered.Wait()
 }
+
+func Once() {
+	var count int
+	increment := func() {
+		count++
+	}
+	var once sync.Once
+	var increments sync.WaitGroup
+
+	increments.Add(100)
+
+	for i := 0; i < 100; i++ {
+		go func(i int) {
+			defer increments.Done()
+			once.Do(increment)
+		}(i)
+	}
+
+	increments.Wait()
+	fmt.Printf("Count is %d", count)
+}
