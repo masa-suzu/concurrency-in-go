@@ -51,3 +51,21 @@ func BufferedChannels() {
 	}
 
 }
+
+func ReadOnlyChannel() {
+	createReadOnlyChannel := func() <-chan int {
+		buf := make(chan int, 5)
+		go func() {
+			defer close(buf)
+			for i := 0; i <= 5; i++ {
+				fmt.Printf("Sent: %d\n", i)
+				buf <- i
+			}
+		}()
+		return buf
+	}
+	for ret := range createReadOnlyChannel() {
+		fmt.Printf("Recieved: %d\n", ret)
+	}
+	fmt.Println("Done")
+}

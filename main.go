@@ -13,4 +13,5 @@ func main() {
 	chapter3.Channel()
 	//chapter3.DeadLockChannel()
 	chapter3.BufferedChannels()
+	chapter3.ReadOnlyChannel()
 }
