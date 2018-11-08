@@ -194,5 +194,50 @@ func Once() {
 	}
 
 	increments.Wait()
-	fmt.Printf("Count is %d", count)
+	fmt.Printf("Count is %d\n", count)
+}
+
+func Pool() {
+	pool := &sync.Pool{
+		New: func() interface{} {
+			fmt.Println("creating new instance")
+			return struct {
+			}{}
+		},
+	}
+
+	pool.New()
+	instance := pool.Get()
+	pool.Put(instance)
+	pool.Get()
+	pool.Get()
+
+	var numCalcsCreated int
+	calcPool := &sync.Pool{
+		New: func() interface{} {
+			numCalcsCreated += 1
+			mem := make([]byte, 1024)
+			fmt.Println("Allocating 1kb.")
+
+			return &mem
+		},
+	}
+	calcPool.Put(calcPool.New())
+	calcPool.Put(calcPool.New())
+	calcPool.Put(calcPool.New())
+	calcPool.Put(calcPool.New())
+
+	const numWorkers = 1024 * 1024
+
+	var wg sync.WaitGroup
+	wg.Add(numWorkers)
+	for i := numWorkers; i > 0; i-- {
+		go func() {
+			defer wg.Done()
+			mem := calcPool.Get().(*[]byte)
+			defer calcPool.Put(mem)
+		}()
+	}
+	wg.Wait()
+	fmt.Printf("%d calculators were created.", numCalcsCreated)
 }
