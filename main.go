@@ -9,5 +9,8 @@ func main() {
 	//chapter3.Cond()
 	//chapter3.BroadCast()
 	//chapter3.Once()
-	chapter3.Pool()
+	//chapter3.Pool()
+	chapter3.Channel()
+	//chapter3.DeadLockChannel()
+	chapter3.BufferedChannels()
 }
