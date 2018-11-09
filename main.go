@@ -1,18 +1,7 @@
 package main
 
-import "github.com/masa-suzu/concurrency-in-go/chapter3"
+import "github.com/masa-suzu/concurrency-in-go/chapter4"
 
 func main() {
-	//chapter3.WaitGroup()
-	//chapter3.Mutex()
-	//chapter3.RWMutex()
-	//chapter3.Cond()
-	//chapter3.BroadCast()
-	//chapter3.Once()
-	//chapter3.Pool()
-	chapter3.Channel()
-	//chapter3.DeadLockChannel()
-	chapter3.BufferedChannels()
-	chapter3.ReadOnlyChannel()
-	chapter3.Select()
+	chapter4.Bind()
 }
