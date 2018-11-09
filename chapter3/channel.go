@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"time"
 )
 
 func Channel() {
@@ -68,4 +69,26 @@ func ReadOnlyChannel() {
 		fmt.Printf("Recieved: %d\n", ret)
 	}
 	fmt.Println("Done")
+}
+
+func Select() {
+	done := make(chan interface{})
+
+	go func() {
+		time.Sleep(5 * time.Second)
+		close(done)
+	}()
+
+	w := 0
+loop:
+	for {
+		select {
+		case <-done:
+			break loop
+		default:
+		}
+		w++
+		time.Sleep(1 * time.Second)
+	}
+	fmt.Printf("%v cycles\n", w)
 }
