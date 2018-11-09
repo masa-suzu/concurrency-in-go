@@ -48,5 +48,5 @@ func ORSample() {
 		sig(1*time.Minute),
 		sig(1*time.Second),
 	)
-	fmt.Printf("done after %v", time.Since(start))
+	fmt.Printf("done after %v\n", time.Since(start))
 }

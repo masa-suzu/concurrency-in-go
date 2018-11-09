@@ -6,4 +6,5 @@ func main() {
 	chapter4.Done1()
 	chapter4.Done2()
 	chapter4.ORSample()
+	chapter4.GetFromURLs()
 }
