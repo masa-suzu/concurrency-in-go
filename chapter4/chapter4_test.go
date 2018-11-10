@@ -1,6 +1,8 @@
 package chapter4
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestBind(t *testing.T) {
 
@@ -25,5 +27,23 @@ func TestBind(t *testing.T) {
 				t.Errorf("len(got) = %v, want %v", i, len(tt.want))
 			}
 		})
+	}
+}
+
+func BenchmarkTypedStream(b *testing.B) {
+	done := make(chan interface{})
+	defer close(done)
+
+	b.ResetTimer()
+	for range RepeatString(done, "string").Take(b.N).value {
+	}
+}
+
+func BenchmarkGenericStream(b *testing.B) {
+	done := make(chan interface{})
+	defer close(done)
+
+	b.ResetTimer()
+	for range Repeat(done, "string").Take(b.N).ToString().value {
 	}
 }

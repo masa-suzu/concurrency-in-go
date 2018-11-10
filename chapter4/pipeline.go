@@ -58,6 +58,11 @@ type stream struct {
 	value <-chan interface{}
 }
 
+type stringStream struct {
+	done  <-chan interface{}
+	value <-chan string
+}
+
 func Repeat(done <-chan interface{}, values ...interface{}) *stream {
 	ch := make(chan interface{})
 
@@ -76,8 +81,25 @@ func Repeat(done <-chan interface{}, values ...interface{}) *stream {
 	return &stream{done: done, value: ch}
 }
 
-func (s *stream) Take(num int) *stream {
-	ch := make(chan interface{})
+func RepeatString(done <-chan interface{}, values ...string) *stringStream {
+	ch := make(chan string)
+
+	go func() {
+		defer close(ch)
+		for {
+			for _, v := range values {
+				select {
+				case <-done:
+					return
+				case ch <- v:
+				}
+			}
+		}
+	}()
+	return &stringStream{done: done, value: ch}
+}
+func (s *stringStream) Take(num int) *stringStream {
+	ch := make(chan string)
 	go func() {
 		defer close(ch)
 		for i := 0; i < num; i++ {
@@ -88,7 +110,7 @@ func (s *stream) Take(num int) *stream {
 			}
 		}
 	}()
-	return &stream{done: s.done, value: ch}
+	return &stringStream{done: s.done, value: ch}
 }
 
 func (s *stream) Plus(v int) *stream {
@@ -109,6 +131,40 @@ func (s *stream) Plus(v int) *stream {
 		}
 	}()
 	return &stream{done: s.done, value: ch}
+}
+
+func (s *stream) Take(num int) *stream {
+	ch := make(chan interface{})
+	go func() {
+		defer close(ch)
+		for i := 0; i < num; i++ {
+			select {
+			case <-s.done:
+				return
+			case ch <- <-s.value:
+			}
+		}
+	}()
+	return &stream{done: s.done, value: ch}
+}
+func (s *stream) ToString() *stringStream {
+	ch := make(chan string)
+	go func() {
+		defer close(ch)
+		for value := range s.value {
+			i, ok := value.(string)
+			if !ok {
+				ch <- fmt.Sprintf("%#v is not string", value)
+				continue
+			}
+			select {
+			case <-s.done:
+				return
+			case ch <- i:
+			}
+		}
+	}()
+	return &stringStream{done: s.done, value: ch}
 }
 
 func TakeTenOnes() {
