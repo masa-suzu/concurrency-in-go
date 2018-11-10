@@ -2,6 +2,8 @@ package chapter4
 
 import (
 	"fmt"
+	"sync"
+	"time"
 )
 
 type maps func(int) int
@@ -80,7 +82,6 @@ func Repeat(done <-chan interface{}, values ...interface{}) *stream {
 	}()
 	return &stream{done: done, value: ch}
 }
-
 func RepeatString(done <-chan interface{}, values ...string) *stringStream {
 	ch := make(chan string)
 
@@ -175,4 +176,80 @@ func TakeTenOnes() {
 		fmt.Printf("%v ", one)
 	}
 	fmt.Println("")
+}
+
+type intStream struct {
+	done  <-chan interface{}
+	value <-chan int
+}
+
+func RepeatFrom(done <-chan interface{}, f func() int) *intStream {
+	ch := make(chan int)
+
+	go func() {
+		defer close(ch)
+		for {
+			select {
+			case <-done:
+				return
+			case ch <- f():
+			}
+		}
+	}()
+	return &intStream{done: done, value: ch}
+}
+
+func (is *intStream) FindPrime() *intStream {
+	ch := make(chan int)
+
+	isPrime := func(int) bool {
+		time.Sleep(1 * time.Millisecond)
+		return true
+	}
+	go func() {
+		defer close(ch)
+		for {
+			select {
+			case <-is.done:
+				return
+			default:
+				break
+			}
+			i := <-is.value
+			if isPrime(i) {
+				ch <- i
+				continue
+			}
+		}
+	}()
+	return &intStream{done: is.done, value: ch}
+}
+
+func FanIn(done <-chan interface{}, streams ...*intStream) *stream {
+	var wg sync.WaitGroup
+	multiplexedStream := make(chan interface{})
+
+	multiplex := func(done <-chan interface{}, c <-chan int) {
+		defer wg.Done()
+		for i := range c {
+			select {
+
+			case <-done:
+				return
+			case multiplexedStream <- i:
+			}
+		}
+	}
+
+	wg.Add(len(streams))
+
+	for _, c := range streams {
+		go multiplex(c.done, c.value)
+	}
+	go func() {
+		wg.Wait()
+		close(multiplexedStream)
+	}()
+
+	return &stream{done: done, value: multiplexedStream}
 }

@@ -1,6 +1,8 @@
 package chapter4
 
 import (
+	"math/rand"
+	"runtime"
 	"testing"
 )
 
@@ -45,5 +47,21 @@ func BenchmarkGenericStream(b *testing.B) {
 
 	b.ResetTimer()
 	for range Repeat(done, "string").Take(b.N).ToString().value {
+	}
+}
+
+func BenchmarkFinin(b *testing.B) {
+	numFinders := runtime.NumCPU()
+	done := make(chan interface{})
+	b.StartTimer()
+
+	primeStream := RepeatFrom(done, func() int { return rand.Intn(50000000) }).FindPrime()
+	finders := make([]*intStream, numFinders)
+
+	for i := 0; i < numFinders; i++ {
+		finders[i] = primeStream
+	}
+
+	for _ = range FanIn(done, finders...).Take(b.N).value {
 	}
 }
