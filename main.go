@@ -1,7 +1,7 @@
 package main
 
-import "github.com/masa-suzu/concurrency-in-go/chapter4"
+import "github.com/masa-suzu/concurrency-in-go/chapter5"
 
 func main() {
-	chapter4.TakeTenOnes()
+	chapter5.Run()
 }
